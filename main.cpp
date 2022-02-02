@@ -1,16 +1,14 @@
 #include <iostream>
 #include <memory>
 #include <thread>
-#include <atomic>
 
 #include "MessageType.pb.h"
+#include "MessageType.pb.cc"
 
 #include "SocketConnection.h"
-#include "Message.h"
 #include "ConfigParser.h"
 
-std::atomic_uint32_t threadIndex(0);
-std::string pathToJson = "/home/chi3hi/CLionProjects/CommunicationHub/Config.json";
+static std::string pathToJson = "/home/chi3hi/CLionProjects/CommunicationHub/Config.json";
 
 
 int main(int argc, char* argv[])
@@ -33,18 +31,29 @@ int main(int argc, char* argv[])
         auto connectionHandler = [socketConnection = socketConnection,
                                   capacity = configParser.GetConfig()->messageCapacity](){
 
-            Message message(capacity);
-
             if(!socketConnection->IsConnected())
                 return -1;
 
-            ++threadIndex;
+            size_t length = capacity;
+            char* buffer = new char[capacity];
 
-            while(socketConnection->Read(message) == err_t::SUCCESS)
+            GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+            while(socketConnection->Read(buffer, length) == err_t::SUCCESS)
             {
-                if(socketConnection->Write(message) != err_t::SUCCESS)
-                    return -1;
+                ipc::Package package;
+                package.ParseFromArray(buffer, length);
+
+                std::cout << "Message: " << package.payload().value() << std::endl;
+
+                size_t actualSize = package.ByteSizeLong();
+                package.SerializeToArray(buffer, actualSize);
+
+                if(socketConnection->Write(buffer, actualSize) != err_t::SUCCESS)
+                    break;
             }
+            google::protobuf::ShutdownProtobufLibrary();
+
             return 0;
         };
 

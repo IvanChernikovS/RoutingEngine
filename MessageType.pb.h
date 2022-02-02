@@ -54,43 +54,43 @@ struct TableStruct_MessageType_2eproto {
 };
 extern const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_MessageType_2eproto;
 namespace ipc {
+class Header;
+struct HeaderDefaultTypeInternal;
+extern HeaderDefaultTypeInternal _Header_default_instance_;
 class Package;
 struct PackageDefaultTypeInternal;
 extern PackageDefaultTypeInternal _Package_default_instance_;
-class Package_Header;
-struct Package_HeaderDefaultTypeInternal;
-extern Package_HeaderDefaultTypeInternal _Package_Header_default_instance_;
-class Package_Payload;
-struct Package_PayloadDefaultTypeInternal;
-extern Package_PayloadDefaultTypeInternal _Package_Payload_default_instance_;
+class Payload;
+struct PayloadDefaultTypeInternal;
+extern PayloadDefaultTypeInternal _Payload_default_instance_;
 }  // namespace ipc
 PROTOBUF_NAMESPACE_OPEN
+template<> ::ipc::Header* Arena::CreateMaybeMessage<::ipc::Header>(Arena*);
 template<> ::ipc::Package* Arena::CreateMaybeMessage<::ipc::Package>(Arena*);
-template<> ::ipc::Package_Header* Arena::CreateMaybeMessage<::ipc::Package_Header>(Arena*);
-template<> ::ipc::Package_Payload* Arena::CreateMaybeMessage<::ipc::Package_Payload>(Arena*);
+template<> ::ipc::Payload* Arena::CreateMaybeMessage<::ipc::Payload>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
 namespace ipc {
 
 // ===================================================================
 
-class Package_Header final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:ipc.Package.Header) */ {
+class Header final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:ipc.Header) */ {
  public:
-  inline Package_Header() : Package_Header(nullptr) {}
-  ~Package_Header() override;
-  explicit constexpr Package_Header(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+  inline Header() : Header(nullptr) {}
+  ~Header() override;
+  explicit constexpr Header(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
 
-  Package_Header(const Package_Header& from);
-  Package_Header(Package_Header&& from) noexcept
-    : Package_Header() {
+  Header(const Header& from);
+  Header(Header&& from) noexcept
+    : Header() {
     *this = ::std::move(from);
   }
 
-  inline Package_Header& operator=(const Package_Header& from) {
+  inline Header& operator=(const Header& from) {
     CopyFrom(from);
     return *this;
   }
-  inline Package_Header& operator=(Package_Header&& from) noexcept {
+  inline Header& operator=(Header&& from) noexcept {
     if (this == &from) return *this;
     if (GetOwningArena() == from.GetOwningArena()
   #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
@@ -113,20 +113,20 @@ class Package_Header final :
   static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
     return default_instance().GetMetadata().reflection;
   }
-  static const Package_Header& default_instance() {
+  static const Header& default_instance() {
     return *internal_default_instance();
   }
-  static inline const Package_Header* internal_default_instance() {
-    return reinterpret_cast<const Package_Header*>(
-               &_Package_Header_default_instance_);
+  static inline const Header* internal_default_instance() {
+    return reinterpret_cast<const Header*>(
+               &_Header_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
     0;
 
-  friend void swap(Package_Header& a, Package_Header& b) {
+  friend void swap(Header& a, Header& b) {
     a.Swap(&b);
   }
-  inline void Swap(Package_Header* other) {
+  inline void Swap(Header* other) {
     if (other == this) return;
   #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
     if (GetOwningArena() != nullptr &&
@@ -139,7 +139,7 @@ class Package_Header final :
       ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
     }
   }
-  void UnsafeArenaSwap(Package_Header* other) {
+  void UnsafeArenaSwap(Header* other) {
     if (other == this) return;
     GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
     InternalSwap(other);
@@ -147,13 +147,13 @@ class Package_Header final :
 
   // implements Message ----------------------------------------------
 
-  Package_Header* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
-    return CreateMaybeMessage<Package_Header>(arena);
+  Header* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<Header>(arena);
   }
   using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
-  void CopyFrom(const Package_Header& from);
+  void CopyFrom(const Header& from);
   using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
-  void MergeFrom(const Package_Header& from);
+  void MergeFrom(const Header& from);
   private:
   static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to, const ::PROTOBUF_NAMESPACE_ID::Message& from);
   public:
@@ -170,15 +170,15 @@ class Package_Header final :
   void SharedCtor();
   void SharedDtor();
   void SetCachedSize(int size) const final;
-  void InternalSwap(Package_Header* other);
+  void InternalSwap(Header* other);
 
   private:
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "ipc.Package.Header";
+    return "ipc.Header";
   }
   protected:
-  explicit Package_Header(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+  explicit Header(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                        bool is_message_owned = false);
   private:
   static void ArenaDtor(void* object);
@@ -206,7 +206,7 @@ class Package_Header final :
   void _internal_set_size(uint32_t value);
   public:
 
-  // @@protoc_insertion_point(class_scope:ipc.Package.Header)
+  // @@protoc_insertion_point(class_scope:ipc.Header)
  private:
   class _Internal;
 
@@ -219,24 +219,24 @@ class Package_Header final :
 };
 // -------------------------------------------------------------------
 
-class Package_Payload final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:ipc.Package.Payload) */ {
+class Payload final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:ipc.Payload) */ {
  public:
-  inline Package_Payload() : Package_Payload(nullptr) {}
-  ~Package_Payload() override;
-  explicit constexpr Package_Payload(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+  inline Payload() : Payload(nullptr) {}
+  ~Payload() override;
+  explicit constexpr Payload(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
 
-  Package_Payload(const Package_Payload& from);
-  Package_Payload(Package_Payload&& from) noexcept
-    : Package_Payload() {
+  Payload(const Payload& from);
+  Payload(Payload&& from) noexcept
+    : Payload() {
     *this = ::std::move(from);
   }
 
-  inline Package_Payload& operator=(const Package_Payload& from) {
+  inline Payload& operator=(const Payload& from) {
     CopyFrom(from);
     return *this;
   }
-  inline Package_Payload& operator=(Package_Payload&& from) noexcept {
+  inline Payload& operator=(Payload&& from) noexcept {
     if (this == &from) return *this;
     if (GetOwningArena() == from.GetOwningArena()
   #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
@@ -259,20 +259,20 @@ class Package_Payload final :
   static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
     return default_instance().GetMetadata().reflection;
   }
-  static const Package_Payload& default_instance() {
+  static const Payload& default_instance() {
     return *internal_default_instance();
   }
-  static inline const Package_Payload* internal_default_instance() {
-    return reinterpret_cast<const Package_Payload*>(
-               &_Package_Payload_default_instance_);
+  static inline const Payload* internal_default_instance() {
+    return reinterpret_cast<const Payload*>(
+               &_Payload_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
     1;
 
-  friend void swap(Package_Payload& a, Package_Payload& b) {
+  friend void swap(Payload& a, Payload& b) {
     a.Swap(&b);
   }
-  inline void Swap(Package_Payload* other) {
+  inline void Swap(Payload* other) {
     if (other == this) return;
   #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
     if (GetOwningArena() != nullptr &&
@@ -285,7 +285,7 @@ class Package_Payload final :
       ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
     }
   }
-  void UnsafeArenaSwap(Package_Payload* other) {
+  void UnsafeArenaSwap(Payload* other) {
     if (other == this) return;
     GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
     InternalSwap(other);
@@ -293,13 +293,13 @@ class Package_Payload final :
 
   // implements Message ----------------------------------------------
 
-  Package_Payload* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
-    return CreateMaybeMessage<Package_Payload>(arena);
+  Payload* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<Payload>(arena);
   }
   using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
-  void CopyFrom(const Package_Payload& from);
+  void CopyFrom(const Payload& from);
   using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
-  void MergeFrom(const Package_Payload& from);
+  void MergeFrom(const Payload& from);
   private:
   static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to, const ::PROTOBUF_NAMESPACE_ID::Message& from);
   public:
@@ -316,15 +316,15 @@ class Package_Payload final :
   void SharedCtor();
   void SharedDtor();
   void SetCachedSize(int size) const final;
-  void InternalSwap(Package_Payload* other);
+  void InternalSwap(Payload* other);
 
   private:
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "ipc.Package.Payload";
+    return "ipc.Payload";
   }
   protected:
-  explicit Package_Payload(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+  explicit Payload(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                        bool is_message_owned = false);
   private:
   static void ArenaDtor(void* object);
@@ -341,11 +341,10 @@ class Package_Payload final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kValueFieldNumber = 3,
+    kValueFieldNumber = 2,
     kLengthFieldNumber = 1,
-    kCapacityFieldNumber = 2,
   };
-  // bytes value = 3;
+  // bytes value = 2;
   void clear_value();
   const std::string& value() const;
   template <typename ArgT0 = const std::string&, typename... ArgT>
@@ -368,16 +367,7 @@ class Package_Payload final :
   void _internal_set_length(uint32_t value);
   public:
 
-  // fixed32 capacity = 2;
-  void clear_capacity();
-  uint32_t capacity() const;
-  void set_capacity(uint32_t value);
-  private:
-  uint32_t _internal_capacity() const;
-  void _internal_set_capacity(uint32_t value);
-  public:
-
-  // @@protoc_insertion_point(class_scope:ipc.Package.Payload)
+  // @@protoc_insertion_point(class_scope:ipc.Payload)
  private:
   class _Internal;
 
@@ -386,7 +376,6 @@ class Package_Payload final :
   typedef void DestructorSkippable_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr value_;
   uint32_t length_;
-  uint32_t capacity_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_MessageType_2eproto;
 };
@@ -511,50 +500,47 @@ class Package final :
 
   // nested types ----------------------------------------------------
 
-  typedef Package_Header Header;
-  typedef Package_Payload Payload;
-
   // accessors -------------------------------------------------------
 
   enum : int {
     kHeaderFieldNumber = 1,
     kPayloadFieldNumber = 2,
   };
-  // .ipc.Package.Header header = 1;
+  // .ipc.Header header = 1;
   bool has_header() const;
   private:
   bool _internal_has_header() const;
   public:
   void clear_header();
-  const ::ipc::Package_Header& header() const;
-  PROTOBUF_NODISCARD ::ipc::Package_Header* release_header();
-  ::ipc::Package_Header* mutable_header();
-  void set_allocated_header(::ipc::Package_Header* header);
+  const ::ipc::Header& header() const;
+  PROTOBUF_NODISCARD ::ipc::Header* release_header();
+  ::ipc::Header* mutable_header();
+  void set_allocated_header(::ipc::Header* header);
   private:
-  const ::ipc::Package_Header& _internal_header() const;
-  ::ipc::Package_Header* _internal_mutable_header();
+  const ::ipc::Header& _internal_header() const;
+  ::ipc::Header* _internal_mutable_header();
   public:
   void unsafe_arena_set_allocated_header(
-      ::ipc::Package_Header* header);
-  ::ipc::Package_Header* unsafe_arena_release_header();
+      ::ipc::Header* header);
+  ::ipc::Header* unsafe_arena_release_header();
 
-  // .ipc.Package.Payload payload = 2;
+  // .ipc.Payload payload = 2;
   bool has_payload() const;
   private:
   bool _internal_has_payload() const;
   public:
   void clear_payload();
-  const ::ipc::Package_Payload& payload() const;
-  PROTOBUF_NODISCARD ::ipc::Package_Payload* release_payload();
-  ::ipc::Package_Payload* mutable_payload();
-  void set_allocated_payload(::ipc::Package_Payload* payload);
+  const ::ipc::Payload& payload() const;
+  PROTOBUF_NODISCARD ::ipc::Payload* release_payload();
+  ::ipc::Payload* mutable_payload();
+  void set_allocated_payload(::ipc::Payload* payload);
   private:
-  const ::ipc::Package_Payload& _internal_payload() const;
-  ::ipc::Package_Payload* _internal_mutable_payload();
+  const ::ipc::Payload& _internal_payload() const;
+  ::ipc::Payload* _internal_mutable_payload();
   public:
   void unsafe_arena_set_allocated_payload(
-      ::ipc::Package_Payload* payload);
-  ::ipc::Package_Payload* unsafe_arena_release_payload();
+      ::ipc::Payload* payload);
+  ::ipc::Payload* unsafe_arena_release_payload();
 
   // @@protoc_insertion_point(class_scope:ipc.Package)
  private:
@@ -563,8 +549,8 @@ class Package final :
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  ::ipc::Package_Header* header_;
-  ::ipc::Package_Payload* payload_;
+  ::ipc::Header* header_;
+  ::ipc::Payload* payload_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_MessageType_2eproto;
 };
@@ -577,108 +563,88 @@ class Package final :
   #pragma GCC diagnostic push
   #pragma GCC diagnostic ignored "-Wstrict-aliasing"
 #endif  // __GNUC__
-// Package_Header
+// Header
 
 // fixed32 size = 1;
-inline void Package_Header::clear_size() {
+inline void Header::clear_size() {
   size_ = 0u;
 }
-inline uint32_t Package_Header::_internal_size() const {
+inline uint32_t Header::_internal_size() const {
   return size_;
 }
-inline uint32_t Package_Header::size() const {
-  // @@protoc_insertion_point(field_get:ipc.Package.Header.size)
+inline uint32_t Header::size() const {
+  // @@protoc_insertion_point(field_get:ipc.Header.size)
   return _internal_size();
 }
-inline void Package_Header::_internal_set_size(uint32_t value) {
+inline void Header::_internal_set_size(uint32_t value) {
   
   size_ = value;
 }
-inline void Package_Header::set_size(uint32_t value) {
+inline void Header::set_size(uint32_t value) {
   _internal_set_size(value);
-  // @@protoc_insertion_point(field_set:ipc.Package.Header.size)
+  // @@protoc_insertion_point(field_set:ipc.Header.size)
 }
 
 // -------------------------------------------------------------------
 
-// Package_Payload
+// Payload
 
 // fixed32 length = 1;
-inline void Package_Payload::clear_length() {
+inline void Payload::clear_length() {
   length_ = 0u;
 }
-inline uint32_t Package_Payload::_internal_length() const {
+inline uint32_t Payload::_internal_length() const {
   return length_;
 }
-inline uint32_t Package_Payload::length() const {
-  // @@protoc_insertion_point(field_get:ipc.Package.Payload.length)
+inline uint32_t Payload::length() const {
+  // @@protoc_insertion_point(field_get:ipc.Payload.length)
   return _internal_length();
 }
-inline void Package_Payload::_internal_set_length(uint32_t value) {
+inline void Payload::_internal_set_length(uint32_t value) {
   
   length_ = value;
 }
-inline void Package_Payload::set_length(uint32_t value) {
+inline void Payload::set_length(uint32_t value) {
   _internal_set_length(value);
-  // @@protoc_insertion_point(field_set:ipc.Package.Payload.length)
+  // @@protoc_insertion_point(field_set:ipc.Payload.length)
 }
 
-// fixed32 capacity = 2;
-inline void Package_Payload::clear_capacity() {
-  capacity_ = 0u;
-}
-inline uint32_t Package_Payload::_internal_capacity() const {
-  return capacity_;
-}
-inline uint32_t Package_Payload::capacity() const {
-  // @@protoc_insertion_point(field_get:ipc.Package.Payload.capacity)
-  return _internal_capacity();
-}
-inline void Package_Payload::_internal_set_capacity(uint32_t value) {
-  
-  capacity_ = value;
-}
-inline void Package_Payload::set_capacity(uint32_t value) {
-  _internal_set_capacity(value);
-  // @@protoc_insertion_point(field_set:ipc.Package.Payload.capacity)
-}
-
-// bytes value = 3;
-inline void Package_Payload::clear_value() {
+// bytes value = 2;
+inline void Payload::clear_value() {
   value_.ClearToEmpty();
 }
-inline const std::string& Package_Payload::value() const {
-  // @@protoc_insertion_point(field_get:ipc.Package.Payload.value)
+inline const std::string& Payload::value() const {
+  // @@protoc_insertion_point(field_get:ipc.Payload.value)
   return _internal_value();
 }
 template <typename ArgT0, typename... ArgT>
 inline PROTOBUF_ALWAYS_INLINE
-void Package_Payload::set_value(ArgT0&& arg0, ArgT... args) {
+void Payload::set_value(ArgT0&& arg0, ArgT... args) {
  
  value_.SetBytes(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:ipc.Package.Payload.value)
+  // @@protoc_insertion_point(field_set:ipc.Payload.value)
 }
-inline std::string* Package_Payload::mutable_value() {
+inline std::string* Payload::mutable_value() {
   std::string* _s = _internal_mutable_value();
-  // @@protoc_insertion_point(field_mutable:ipc.Package.Payload.value)
+  // @@protoc_insertion_point(field_mutable:ipc.Payload.value)
   return _s;
 }
-inline const std::string& Package_Payload::_internal_value() const {
+inline const std::string& Payload::_internal_value() const {
   return value_.Get();
 }
-inline void Package_Payload::_internal_set_value(const std::string& value) {
+inline void Payload::_internal_set_value(const std::string& value) {
   
   value_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
 }
-inline std::string* Package_Payload::_internal_mutable_value() {
+inline std::string* Payload::_internal_mutable_value() {
   
   return value_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
 }
-inline std::string* Package_Payload::release_value() {
-  // @@protoc_insertion_point(field_release:ipc.Package.Payload.value)
+inline std::string* Payload::release_value() {
+  // @@protoc_insertion_point(field_release:ipc.Payload.value)
   return value_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
 }
-inline void Package_Payload::set_allocated_value(std::string* value) {
+inline void Payload::set_allocated_value(std::string* value) {
   if (value != nullptr) {
     
   } else {
@@ -691,14 +657,14 @@ inline void Package_Payload::set_allocated_value(std::string* value) {
     value_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:ipc.Package.Payload.value)
+  // @@protoc_insertion_point(field_set_allocated:ipc.Payload.value)
 }
 
 // -------------------------------------------------------------------
 
 // Package
 
-// .ipc.Package.Header header = 1;
+// .ipc.Header header = 1;
 inline bool Package::_internal_has_header() const {
   return this != internal_default_instance() && header_ != nullptr;
 }
@@ -711,17 +677,17 @@ inline void Package::clear_header() {
   }
   header_ = nullptr;
 }
-inline const ::ipc::Package_Header& Package::_internal_header() const {
-  const ::ipc::Package_Header* p = header_;
-  return p != nullptr ? *p : reinterpret_cast<const ::ipc::Package_Header&>(
-      ::ipc::_Package_Header_default_instance_);
+inline const ::ipc::Header& Package::_internal_header() const {
+  const ::ipc::Header* p = header_;
+  return p != nullptr ? *p : reinterpret_cast<const ::ipc::Header&>(
+      ::ipc::_Header_default_instance_);
 }
-inline const ::ipc::Package_Header& Package::header() const {
+inline const ::ipc::Header& Package::header() const {
   // @@protoc_insertion_point(field_get:ipc.Package.header)
   return _internal_header();
 }
 inline void Package::unsafe_arena_set_allocated_header(
-    ::ipc::Package_Header* header) {
+    ::ipc::Header* header) {
   if (GetArenaForAllocation() == nullptr) {
     delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(header_);
   }
@@ -733,9 +699,9 @@ inline void Package::unsafe_arena_set_allocated_header(
   }
   // @@protoc_insertion_point(field_unsafe_arena_set_allocated:ipc.Package.header)
 }
-inline ::ipc::Package_Header* Package::release_header() {
+inline ::ipc::Header* Package::release_header() {
   
-  ::ipc::Package_Header* temp = header_;
+  ::ipc::Header* temp = header_;
   header_ = nullptr;
 #ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
   auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
@@ -748,34 +714,34 @@ inline ::ipc::Package_Header* Package::release_header() {
 #endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
   return temp;
 }
-inline ::ipc::Package_Header* Package::unsafe_arena_release_header() {
+inline ::ipc::Header* Package::unsafe_arena_release_header() {
   // @@protoc_insertion_point(field_release:ipc.Package.header)
   
-  ::ipc::Package_Header* temp = header_;
+  ::ipc::Header* temp = header_;
   header_ = nullptr;
   return temp;
 }
-inline ::ipc::Package_Header* Package::_internal_mutable_header() {
+inline ::ipc::Header* Package::_internal_mutable_header() {
   
   if (header_ == nullptr) {
-    auto* p = CreateMaybeMessage<::ipc::Package_Header>(GetArenaForAllocation());
+    auto* p = CreateMaybeMessage<::ipc::Header>(GetArenaForAllocation());
     header_ = p;
   }
   return header_;
 }
-inline ::ipc::Package_Header* Package::mutable_header() {
-  ::ipc::Package_Header* _msg = _internal_mutable_header();
+inline ::ipc::Header* Package::mutable_header() {
+  ::ipc::Header* _msg = _internal_mutable_header();
   // @@protoc_insertion_point(field_mutable:ipc.Package.header)
   return _msg;
 }
-inline void Package::set_allocated_header(::ipc::Package_Header* header) {
+inline void Package::set_allocated_header(::ipc::Header* header) {
   ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
   if (message_arena == nullptr) {
     delete header_;
   }
   if (header) {
     ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
-        ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<::ipc::Package_Header>::GetOwningArena(header);
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<::ipc::Header>::GetOwningArena(header);
     if (message_arena != submessage_arena) {
       header = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
           message_arena, header, submessage_arena);
@@ -788,7 +754,7 @@ inline void Package::set_allocated_header(::ipc::Package_Header* header) {
   // @@protoc_insertion_point(field_set_allocated:ipc.Package.header)
 }
 
-// .ipc.Package.Payload payload = 2;
+// .ipc.Payload payload = 2;
 inline bool Package::_internal_has_payload() const {
   return this != internal_default_instance() && payload_ != nullptr;
 }
@@ -801,17 +767,17 @@ inline void Package::clear_payload() {
   }
   payload_ = nullptr;
 }
-inline const ::ipc::Package_Payload& Package::_internal_payload() const {
-  const ::ipc::Package_Payload* p = payload_;
-  return p != nullptr ? *p : reinterpret_cast<const ::ipc::Package_Payload&>(
-      ::ipc::_Package_Payload_default_instance_);
+inline const ::ipc::Payload& Package::_internal_payload() const {
+  const ::ipc::Payload* p = payload_;
+  return p != nullptr ? *p : reinterpret_cast<const ::ipc::Payload&>(
+      ::ipc::_Payload_default_instance_);
 }
-inline const ::ipc::Package_Payload& Package::payload() const {
+inline const ::ipc::Payload& Package::payload() const {
   // @@protoc_insertion_point(field_get:ipc.Package.payload)
   return _internal_payload();
 }
 inline void Package::unsafe_arena_set_allocated_payload(
-    ::ipc::Package_Payload* payload) {
+    ::ipc::Payload* payload) {
   if (GetArenaForAllocation() == nullptr) {
     delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(payload_);
   }
@@ -823,9 +789,9 @@ inline void Package::unsafe_arena_set_allocated_payload(
   }
   // @@protoc_insertion_point(field_unsafe_arena_set_allocated:ipc.Package.payload)
 }
-inline ::ipc::Package_Payload* Package::release_payload() {
+inline ::ipc::Payload* Package::release_payload() {
   
-  ::ipc::Package_Payload* temp = payload_;
+  ::ipc::Payload* temp = payload_;
   payload_ = nullptr;
 #ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
   auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
@@ -838,34 +804,34 @@ inline ::ipc::Package_Payload* Package::release_payload() {
 #endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
   return temp;
 }
-inline ::ipc::Package_Payload* Package::unsafe_arena_release_payload() {
+inline ::ipc::Payload* Package::unsafe_arena_release_payload() {
   // @@protoc_insertion_point(field_release:ipc.Package.payload)
   
-  ::ipc::Package_Payload* temp = payload_;
+  ::ipc::Payload* temp = payload_;
   payload_ = nullptr;
   return temp;
 }
-inline ::ipc::Package_Payload* Package::_internal_mutable_payload() {
+inline ::ipc::Payload* Package::_internal_mutable_payload() {
   
   if (payload_ == nullptr) {
-    auto* p = CreateMaybeMessage<::ipc::Package_Payload>(GetArenaForAllocation());
+    auto* p = CreateMaybeMessage<::ipc::Payload>(GetArenaForAllocation());
     payload_ = p;
   }
   return payload_;
 }
-inline ::ipc::Package_Payload* Package::mutable_payload() {
-  ::ipc::Package_Payload* _msg = _internal_mutable_payload();
+inline ::ipc::Payload* Package::mutable_payload() {
+  ::ipc::Payload* _msg = _internal_mutable_payload();
   // @@protoc_insertion_point(field_mutable:ipc.Package.payload)
   return _msg;
 }
-inline void Package::set_allocated_payload(::ipc::Package_Payload* payload) {
+inline void Package::set_allocated_payload(::ipc::Payload* payload) {
   ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
   if (message_arena == nullptr) {
     delete payload_;
   }
   if (payload) {
     ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
-        ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<::ipc::Package_Payload>::GetOwningArena(payload);
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<::ipc::Payload>::GetOwningArena(payload);
     if (message_arena != submessage_arena) {
       payload = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
           message_arena, payload, submessage_arena);

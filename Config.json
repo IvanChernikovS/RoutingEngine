@@ -1,5 +1,5 @@
 {
   "ip_address": "10.0.2.15",
   "port": 8080,
-  "capacity": 2048
+  "capacity": 1024
 }
