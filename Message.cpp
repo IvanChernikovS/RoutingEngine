@@ -4,7 +4,8 @@
 
 #include "Message.h"
 
-Message::Message(size_t capacity) : mCapacity(capacity)
+Message::Message(size_t capacity)
+: mCapacity(capacity)
 {
     if(mCapacity > 0)
         mPayload = new char[mCapacity];

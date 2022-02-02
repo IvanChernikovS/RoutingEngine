@@ -2,17 +2,16 @@ syntax = "proto3";
 
 package ipc;
 
+message Header{
+    fixed32 size = 1;
+}
+
+message Payload{
+    fixed32 length = 1;
+    bytes value = 2;
+}
+
 message Package{
-    message Header{
-        fixed32 size = 1;
-    }
-
-    message Payload{
-        fixed32 length = 1;
-        fixed32 capacity = 2;
-        bytes value = 3;
-    }
-
     Header header = 1;
     Payload payload = 2;
 }

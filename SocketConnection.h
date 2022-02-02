@@ -8,8 +8,6 @@
 
 #include "IConnection.h"
 
-class Message;
-
 class SocketConnection: public IConnection
 {
 public:
@@ -20,8 +18,8 @@ public:
 
     err_t Connect() override;
     err_t Disconnect() override;
-    err_t Write(const Message& message) override;
-    err_t Read(Message& message) override;
+    err_t Read(char*, size_t&) override;
+    err_t Write(const char*, size_t) override;
 
     bool IsConnected() const override;
 

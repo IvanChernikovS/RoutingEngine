@@ -8,16 +8,15 @@
 #include <fcntl.h>
 
 #include "SocketConnection.h"
-#include "Message.h"
 
 SocketConnection::SocketConnection(const std::string& socketAddr, uint32_t socketPort)
 {
     mSocketAddr.sin_family = AF_INET;
     mSocketAddr.sin_port = htons(socketPort);
 
-    if(inet_pton(AF_INET, socketAddr.c_str(), &mSocketAddr.sin_addr) <= 0)
+    if(inet_pton(AF_INET, socketAddr.data(), &mSocketAddr.sin_addr) <= 0)
     {
-        std::cout << "Invalid address" << std::endl;
+        std::cout << "Invalid ip address" << std::endl;
     }
 }
 
@@ -39,8 +38,6 @@ err_t SocketConnection::TryAccept()
 
 err_t SocketConnection::Connect()
 {
-    int opt = 1;
-
     if((mServerSocketFd = socket(AF_INET, SOCK_STREAM, 0)) == 0)
     {
         std::cout << "Socket failed" << std::endl;
@@ -48,6 +45,7 @@ err_t SocketConnection::Connect()
     }
     std::cout << "Socket created" << std::endl;
 
+    int opt = 1;
     if(setsockopt(mServerSocketFd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt)))
     {
         std::cout << "Setsockopt failed" << std::endl;
@@ -66,7 +64,7 @@ err_t SocketConnection::Connect()
         std::cout << "Listen failed" << std::endl;
         return err_t::LISTEN_FAILED;
     }
-    std::cout << "Socket heard" << std::endl;
+    std::cout << "Socket listened" << std::endl;
 
     //fcntl(mServerSocketFd, F_SETFL, O_NONBLOCK);
 
@@ -75,31 +73,31 @@ err_t SocketConnection::Connect()
 
 err_t SocketConnection::Disconnect()
 {
-    close(mServerSocketFd);
-    close(mClientSocketFd);
+    if(IsConnected())
+        if(close(mServerSocketFd) < 0 || close(mClientSocketFd) < 0)
+            return err_t::CLOSING_FAILED;
 
     return err_t::SUCCESS;
 }
 
-err_t SocketConnection::Read(Message& message)
+err_t SocketConnection::Read(char* message, size_t& length)
 {
-    if(recv(mClientSocketFd, message.Payload(), message.GetCapacity(), 0) <= 0)
+    if((length = recv(mClientSocketFd, message, length, 0)) <= 0)
     {
         std::cout << "Reading failed" << std::endl;
         return err_t::READING_FAILED;
     }
 
-    message.SetSize(strlen(message.Payload()));
-
-    std::cout << "Message: " << message.Payload() << std::endl;
-
     return err_t::SUCCESS;
 }
 
-err_t SocketConnection::Write(const Message& message)
+err_t SocketConnection::Write(const char* message, size_t size)
 {
-    send(mClientSocketFd, message.Payload(), message.GetSize(), 0 );
-    std::cout << "Message: " << message.Payload() << "; has been sent." << std::endl;
+    if(send(mClientSocketFd, message, size, 0 ) < size)
+    {
+        std::cout << "Writing failed" << std::endl;
+        return err_t::WRITING_FAILED;
+    }
 
     return err_t::SUCCESS;
 }
