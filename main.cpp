@@ -3,7 +3,6 @@
 #include <thread>
 #include <future>
 #include <mutex>
-#include <queue>
 #include <vector>
 
 #include "MessageType.pb.h"
@@ -12,39 +11,30 @@
 #include "Server.h"
 #include "SocketConnection.h"
 #include "ConfigParser.h"
-
-static std::string pathToJson = "/home/chi3hi/CLionProjects/CommunicationHub/Config.json";
+#include "ThreadSafeQueue.h"
 
 std::vector<std::weak_ptr<IConnection>> connections;
-std::queue<ipc::Package> packagesToSend;
+ThreadSafeQueue<ipc::Package> packagesToSend;
 
 std::mutex mtx;
 
-void addToQueue(ipc::Package& package)
+void pollQueue()
 {
-    std::lock_guard<std::mutex> lg(mtx);
-    packagesToSend.emplace(package);
-}
-
-[[noreturn]] void pollQueue()
-{
-    size_t actualSize;
-    char* buffer;
+    char* buffer = nullptr;
 
     while(true)
     {
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
-        {
-            std::lock_guard<std::mutex> lg(mtx);
+        if(packagesToSend.Empty())
+            continue;
 
-            if(packagesToSend.empty())
-                continue;
+        ipc::Package package;
+        packagesToSend.WaitAndPop(package);
+        size_t actualSize = package.ByteSizeLong();
+        buffer = new char[actualSize];
+        package.SerializeToArray(buffer, static_cast<int>(actualSize));
 
-            actualSize = packagesToSend.front().ByteSizeLong();
-            buffer = new char[actualSize];
-            packagesToSend.front().SerializeToArray(buffer, static_cast<int>(actualSize));
-            packagesToSend.pop();
-        }
+        if(connections.empty())
+            break;
 
         for(auto& connection: connections)
         {
@@ -53,15 +43,20 @@ void addToQueue(ipc::Package& package)
 
             connection.lock()->Write(buffer, actualSize);
         }
-
-        delete[] buffer;
     }
+
+    delete[] buffer;
 }
 
-int main()
+int main(const int argc, const char** argv)
 {
     ConfigParser configParser;
-    if(!configParser.Parse(pathToJson.data()))
+    if(argc <= 1 && !argv[1])
+    {
+        std::cout << "Should be path to jason as program arguments" << std::endl;
+        return -1;
+    }
+    if(!configParser.Parse(argv[1]))
     {
         std::cout << "Invalid parsing" << std::endl;
         return -1;
@@ -92,8 +87,6 @@ int main()
             connections.emplace_back(std::weak_ptr<IConnection>(socketConnection));
         }
 
-        char* buffer = new char[capacity];
-
         GOOGLE_PROTOBUF_VERIFY_VERSION;
         ipc::Package package;
 
@@ -102,6 +95,7 @@ int main()
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
             size_t length = capacity;
+            char* buffer = new char[capacity];
             auto result = socketConnection->Read(buffer, length);
             if(result == err_t::READING_FAILED)
                 continue;
@@ -113,7 +107,7 @@ int main()
 
             std::cout << "Message: " << package.payload().value() << std::endl;
 
-            addToQueue(package);
+            packagesToSend.Push(package);
         }
         return 0;
     };
