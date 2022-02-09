@@ -11,11 +11,23 @@ struct config_t
 {
     uint32_t port = 0;
     uint32_t messageCapacity = 0;
+    uint32_t serverCapacity = 0;
     std::string ipAddress = "0.0.0.0";
 
     bool isPortValid() const
     {
-        return std::to_string(port).size() == 4;
+        auto portSize = std::to_string(port).size();
+        return portSize > 0 && portSize < 6;
+    }
+
+    bool isMessageCapacityValid() const
+    {
+        return messageCapacity % 128 == 0;
+    }
+
+    bool isServerCapacityValid() const
+    {
+        return serverCapacity < 1024; //due to select() function
     }
 
     bool isIpValid() const
@@ -39,10 +51,4 @@ struct config_t
 
         return true;
     }
-
-    bool isCapacityValid() const
-    {
-        return messageCapacity % 256 == 0;
-    }
-
 };

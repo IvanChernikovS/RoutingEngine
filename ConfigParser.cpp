@@ -40,7 +40,7 @@ bool ConfigParser::Parse(const char* pathToJason)
         return false;
     }
 
-    if(!ParsePort() || !ParseIp() || !ParseCapacity())
+    if(!ParsePort() || !ParseIp() || !ParseMessageCapacity() || !ParseServerCapacity())
         return false;
 
 
@@ -62,9 +62,16 @@ bool ConfigParser::ParseIp()
     return mConfigData->isIpValid();
 }
 
-bool ConfigParser::ParseCapacity()
+bool ConfigParser::ParseMessageCapacity()
 {
-    mConfigData->messageCapacity = mRoot["capacity"].asUInt();
+    mConfigData->messageCapacity = mRoot["message_capacity"].asUInt();
 
-    return mConfigData->isCapacityValid();
+    return mConfigData->isMessageCapacityValid();
+}
+
+bool ConfigParser::ParseServerCapacity()
+{
+    mConfigData->messageCapacity = mRoot["server_capacity"].asUInt();
+
+    return mConfigData->isServerCapacityValid();
 }

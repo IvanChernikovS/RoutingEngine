@@ -14,22 +14,17 @@ enum class err_t: int32_t
     LISTEN_FAILED = -4,
     ACCEPTING_FAILED = -5,
     READING_FAILED = -6,
-    WRITING_FAILED = -7,
-    CLOSING_FAILED = -8,
+    CONNECTION_CLOSED = -7,
+    WRITING_FAILED = -8,
+    CLOSING_FAILED = -9,
 };
 
 class IConnection
 {
 public:
     explicit IConnection() = default;
-    virtual ~IConnection() = default;
+    virtual ~IConnection() noexcept = default;
 
-    virtual err_t TryAccept() = 0;
-
-    virtual err_t Connect() = 0;
-    virtual err_t Disconnect() = 0;
     virtual err_t Read(char*, size_t&) = 0;
     virtual err_t Write(const char*, size_t) = 0;
-
-    virtual bool IsConnected() const = 0;
 };
