@@ -1,0 +1,14 @@
+//
+// Created by chi3hi on 03.02.22.
+//
+
+#ifndef COMMUNICATIONHUB_PROXYCONNECTION_H
+#define COMMUNICATIONHUB_PROXYCONNECTION_H
+
+
+class ProxyConnection {
+
+};
+
+
+#endif //COMMUNICATIONHUB_PROXYCONNECTION_H

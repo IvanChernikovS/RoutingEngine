@@ -22,7 +22,8 @@ public:
 private:
     bool ParsePort();
     bool ParseIp();
-    bool ParseCapacity();
+    bool ParseMessageCapacity();
+    bool ParseServerCapacity();
 
     std::shared_ptr<config_t> mConfigData;
     Json::Value mRoot;

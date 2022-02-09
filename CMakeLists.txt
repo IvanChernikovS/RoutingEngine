@@ -9,10 +9,14 @@ find_package(Protobuf REQUIRED)
 include_directories(${Protobuf_INCLUDE_DIRS})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
-add_executable(CommunicationHub SocketConnection.cpp
-        Message.cpp
+add_executable(CommunicationHub
+        SocketConnection.cpp
+        Server.cpp
+        ProxyConnection.cpp
         ConfigParser.cpp
-        main.cpp)
+        Message.cpp
+        main.cpp
+        )
 
 target_link_libraries(CommunicationHub
         ${CMAKE_THREAD_LIBS_INIT}
