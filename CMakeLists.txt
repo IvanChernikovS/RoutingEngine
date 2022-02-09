@@ -15,6 +15,7 @@ add_executable(CommunicationHub
         ProxyConnection.cpp
         ConfigParser.cpp
         Message.cpp
+        ThreadSafeQueue.cpp
         main.cpp
         )
 

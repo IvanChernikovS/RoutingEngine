@@ -3,3 +3,8 @@
 //
 
 #include "ProxyConnection.h"
+
+ProxyConnection::ProxyConnection()
+{}
+
+ProxyConnection::~ProxyConnection() noexcept {}

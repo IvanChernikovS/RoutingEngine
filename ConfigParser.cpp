@@ -71,7 +71,7 @@ bool ConfigParser::ParseMessageCapacity()
 
 bool ConfigParser::ParseServerCapacity()
 {
-    mConfigData->messageCapacity = mRoot["server_capacity"].asUInt();
+    mConfigData->serverCapacity = mRoot["server_capacity"].asUInt();
 
     return mConfigData->isServerCapacityValid();
 }

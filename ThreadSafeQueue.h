@@ -15,17 +15,17 @@ public:
     explicit ThreadSafeQueue() = default;
     ~ThreadSafeQueue() noexcept = default;
 
-    void Push(T& value)
+    void Push(T value)
     {
         std::lock_guard<std::mutex> lg(mMutex);
-        mDataQueue.push(value);
+        mDataQueue.push(std::move(value));
         mCV.notify_one();
     }
     void WaitAndPop(T& value)
     {
         std::unique_lock<std::mutex> ul(mMutex);
         mCV.wait(ul, [this]{ return !mDataQueue.empty(); });
-        value.CopyFrom(mDataQueue.front());
+        value = mDataQueue.front();
         mDataQueue.pop();
     }
     bool Empty() const

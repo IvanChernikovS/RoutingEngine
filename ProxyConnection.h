@@ -2,13 +2,15 @@
 // Created by chi3hi on 03.02.22.
 //
 
-#ifndef COMMUNICATIONHUB_PROXYCONNECTION_H
-#define COMMUNICATIONHUB_PROXYCONNECTION_H
+#pragma once
 
 
-class ProxyConnection {
 
+class ProxyConnection
+{
+public:
+    explicit ProxyConnection();
+    ~ProxyConnection() noexcept;
+private:
+    //ipc::Package mPackage;
 };
-
-
-#endif //COMMUNICATIONHUB_PROXYCONNECTION_H
