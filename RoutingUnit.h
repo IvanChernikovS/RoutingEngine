@@ -1,0 +1,14 @@
+//
+// Created by chi3hi on 09.02.22.
+//
+
+#ifndef COMMUNICATIONHUB_ROUTINGUNIT_H
+#define COMMUNICATIONHUB_ROUTINGUNIT_H
+
+
+class RoutingUnit {
+
+};
+
+
+#endif //COMMUNICATIONHUB_ROUTINGUNIT_H
