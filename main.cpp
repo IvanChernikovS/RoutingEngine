@@ -21,13 +21,14 @@ std::mutex mtx;
 void pollQueue()
 {
     char* buffer = nullptr;
+    ipc::Package package;
 
     while(true)
     {
         if(packagesToSend.Empty())
             continue;
 
-        ipc::Package package;
+        package.Clear();
         packagesToSend.WaitAndPop(package);
         size_t actualSize = package.ByteSizeLong();
         buffer = new char[actualSize];
@@ -62,12 +63,12 @@ int main(const int argc, const char** argv)
         return -1;
     }
 
-    uint32_t maxPossibleClientCount = configParser.GetConfig()->serverCapacity;
-    connections.reserve(maxPossibleClientCount);
+    uint32_t maxPossibleClientsCount = configParser.GetConfig()->serverCapacity;
+    connections.reserve(maxPossibleClientsCount);
 
     auto server = std::make_unique<Server>(configParser.GetConfig()->ipAddress,
                                            configParser.GetConfig()->port,
-                                           maxPossibleClientCount);
+                                           maxPossibleClientsCount);
 
     if(!server->Connect())
         return -1;
@@ -113,7 +114,7 @@ int main(const int argc, const char** argv)
     };
 
     std::vector<std::future<int>> threadsPull;
-    threadsPull.reserve(maxPossibleClientCount);
+    threadsPull.reserve(maxPossibleClientsCount);
 
     while(true)
     {
