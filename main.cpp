@@ -1,53 +1,12 @@
 #include <iostream>
 #include <memory>
-#include <thread>
 #include <future>
 #include <mutex>
 #include <vector>
 
-#include "MessageType.pb.h"
-#include "MessageType.pb.cc"
-
 #include "Server.h"
-#include "SocketConnection.h"
 #include "ConfigParser.h"
-#include "ThreadSafeQueue.h"
-
-std::vector<std::weak_ptr<IConnection>> connections;
-ThreadSafeQueue<ipc::Package> packagesToSend;
-
-std::mutex mtx;
-
-void pollQueue()
-{
-    char* buffer = nullptr;
-    ipc::Package package;
-
-    while(true)
-    {
-        if(packagesToSend.Empty())
-            continue;
-
-        package.Clear();
-        packagesToSend.WaitAndPop(package);
-        size_t actualSize = package.ByteSizeLong();
-        buffer = new char[actualSize];
-        package.SerializeToArray(buffer, static_cast<int>(actualSize));
-
-        if(connections.empty())
-            break;
-
-        for(auto& connection: connections)
-        {
-            if(connection.expired())
-                continue;
-
-            connection.lock()->Write(buffer, actualSize);
-        }
-    }
-
-    delete[] buffer;
-}
+#include "RoutingUnit.h"
 
 int main(const int argc, const char** argv)
 {
@@ -64,7 +23,6 @@ int main(const int argc, const char** argv)
     }
 
     uint32_t maxPossibleClientsCount = configParser.GetConfig()->serverCapacity;
-    connections.reserve(maxPossibleClientsCount);
 
     auto server = std::make_unique<Server>(configParser.GetConfig()->ipAddress,
                                            configParser.GetConfig()->port,
@@ -73,43 +31,18 @@ int main(const int argc, const char** argv)
     if(!server->Connect())
         return -1;
 
-    std::thread tPolling(pollQueue);
-    if(tPolling.joinable())
-        tPolling.detach();
+    auto routingUnit = std::make_shared<RoutingUnit>(maxPossibleClientsCount);
 
-    auto connectionHandler = [capacity = configParser.GetConfig()->messageCapacity](int clientFd){
+    routingUnit->PollQueue();
+
+    auto connectionHandler = [capacity = configParser.GetConfig()->messageCapacity,
+                              routingUnit](int clientFd){
 
         if(clientFd <= 0)
             return -1;
 
-        auto socketConnection = std::make_shared<SocketConnection>(clientFd);
-        {
-            std::lock_guard<std::mutex> lg(mtx);
-            connections.emplace_back(std::weak_ptr<IConnection>(socketConnection));
-        }
+        routingUnit->PollChanel(clientFd, capacity);
 
-        GOOGLE_PROTOBUF_VERIFY_VERSION;
-        ipc::Package package;
-
-        while(socketConnection->IsConnected())
-        {
-            std::this_thread::sleep_for(std::chrono::milliseconds(10));
-
-            size_t length = capacity;
-            char* buffer = new char[capacity];
-            auto result = socketConnection->Read(buffer, length);
-            if(result == err_t::READING_FAILED)
-                continue;
-            if(result == err_t::CONNECTION_CLOSED)
-                break;
-
-            package.Clear();
-            package.ParseFromArray(buffer, static_cast<int>(length));
-
-            std::cout << "Message: " << package.payload().value() << std::endl;
-
-            packagesToSend.Push(package);
-        }
         return 0;
     };
 
@@ -139,8 +72,6 @@ int main(const int argc, const char** argv)
             it = threadsPull.erase(it);
         }
     }
-
-    google::protobuf::ShutdownProtobufLibrary();
 
     return 0;
 }
