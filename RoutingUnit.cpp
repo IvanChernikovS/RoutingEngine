@@ -13,8 +13,10 @@
 
 std::mutex mutex;
 
-RoutingUnit::RoutingUnit(uint32_t maxPossibleClientsCount)
+RoutingUnit::RoutingUnit(uint32_t maxPossibleClientsCount, size_t capacity)
+: mMessageCapacity(capacity)
 {
+    GOOGLE_PROTOBUF_VERIFY_VERSION;
     mConnections.reserve(maxPossibleClientsCount);
 }
 
@@ -44,21 +46,20 @@ void RoutingUnit::PollQueue()
         tPolling.detach();
 }
 
-void RoutingUnit::PollChanel(int clientFd, size_t capacity)
+void RoutingUnit::PollChanel(int clientFd)
 {
     auto socketConnection = std::make_shared<SocketConnection>(clientFd);
 
     AddConnectionWeak(std::weak_ptr<IConnection>(socketConnection));
 
-    GOOGLE_PROTOBUF_VERIFY_VERSION;
     ipc::Package package;
 
     while(socketConnection->IsConnected())
     {
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
-        size_t length = capacity;
-        char* buffer = new char[capacity];
+        size_t length = mMessageCapacity;
+        char* buffer = new char[mMessageCapacity];
         auto result = socketConnection->Read(buffer, length);
         if(result == err_t::READING_FAILED)
             continue;

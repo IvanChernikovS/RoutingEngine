@@ -12,7 +12,7 @@
 
 Server::Server(const std::string& ipAddress, uint32_t port, uint32_t capacity)
 : mMaxClientCount(capacity)
-, mTimeout({3 * 60, 0})
+, mTimeout({1 * 60, 0})
 , mSocketAddress({AF_INET, htons(port)})
 {
     if(inet_pton(AF_INET, ipAddress.data(), &mSocketAddress.sin_addr) <= 0)

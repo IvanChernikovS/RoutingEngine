@@ -8,23 +8,21 @@
 #include <jsoncpp/json/value.h>
 #include <jsoncpp/json/json.h>
 
-#include "Config.h"
+struct config_t;
 
 class ConfigParser
 {
 public:
     explicit ConfigParser();
-    ~ConfigParser();
+    virtual ~ConfigParser();
 
-    bool Parse(const char* path);
-    std::shared_ptr<config_t> GetConfig() const;
+    virtual bool Parse(const char* path, std::unique_ptr<config_t>& config);
 
 private:
-    bool ParsePort();
-    bool ParseIp();
-    bool ParseMessageCapacity();
-    bool ParseServerCapacity();
+    bool ParsePort(std::unique_ptr<config_t>&);
+    bool ParseIp(std::unique_ptr<config_t>&);
+    bool ParseMessageCapacity(std::unique_ptr<config_t>&);
+    bool ParseServerCapacity(std::unique_ptr<config_t>&);
 
-    std::shared_ptr<config_t> mConfigData;
     Json::Value mRoot;
 };
