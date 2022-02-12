@@ -15,13 +15,14 @@ class IConnection;
 class RoutingUnit
 {
 public:
-    explicit RoutingUnit(uint32_t maxPossibleClientsCount);
+    explicit RoutingUnit(uint32_t maxPossibleClientsCount, size_t capacity);
     ~RoutingUnit() noexcept;
 
     void PollQueue();
-    void PollChanel(int clientFd, size_t capacity);
+    void PollChanel(int clientFd);
 
 private:
+    size_t mMessageCapacity = 0;
     std::vector<std::weak_ptr<IConnection>> mConnections;
     ThreadSafeQueue<ipc::Package> mPackagesToSend;
 

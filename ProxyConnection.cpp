@@ -7,4 +7,5 @@
 ProxyConnection::ProxyConnection()
 {}
 
-ProxyConnection::~ProxyConnection() noexcept {}
+ProxyConnection::~ProxyConnection() noexcept
+{}

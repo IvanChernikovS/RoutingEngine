@@ -10,9 +10,9 @@ include_directories(${Protobuf_INCLUDE_DIRS})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 add_executable(CommunicationHub
+        RoutingEngine.cpp
         SocketConnection.cpp
         Server.cpp
-        ProxyConnection.cpp
         ConfigParser.cpp
         ThreadSafeQueue.cpp
         RoutingUnit.cpp

@@ -6,19 +6,12 @@
 #include <iostream>
 
 #include "ConfigParser.h"
+#include "Config.h"
 
-ConfigParser::ConfigParser()
-: mConfigData(std::make_shared<config_t>())
-{}
-
+ConfigParser::ConfigParser() = default;
 ConfigParser::~ConfigParser() = default;
 
-std::shared_ptr<config_t> ConfigParser::GetConfig() const
-{
-    return mConfigData;
-}
-
-bool ConfigParser::Parse(const char* pathToJason)
+bool ConfigParser::Parse(const char* pathToJason, std::unique_ptr<config_t>& config)
 {
     std::ifstream jsonConfig(pathToJason);
     if(!jsonConfig.is_open())
@@ -40,38 +33,40 @@ bool ConfigParser::Parse(const char* pathToJason)
         return false;
     }
 
-    if(!ParsePort() || !ParseIp() || !ParseMessageCapacity() || !ParseServerCapacity())
+    if(!ParsePort(config) ||
+       !ParseIp(config) ||
+       !ParseMessageCapacity(config) ||
+       !ParseServerCapacity(config))
         return false;
-
 
     std::cout << "Config parsing completed" << std::endl;
     return true;
 }
 
-bool ConfigParser::ParsePort()
+bool ConfigParser::ParsePort(std::unique_ptr<config_t>& config)
 {
-    mConfigData->port = mRoot["port"].asUInt();
+    config->port = mRoot["port"].asUInt();
 
-    return mConfigData->isPortValid();
+    return config->isPortValid();
 }
 
-bool ConfigParser::ParseIp()
+bool ConfigParser::ParseIp(std::unique_ptr<config_t>& config)
 {
-    mConfigData->ipAddress = mRoot["ip_address"].asString();
+    config->ipAddress = mRoot["ip_address"].asString();
 
-    return mConfigData->isIpValid();
+    return config->isIpValid();
 }
 
-bool ConfigParser::ParseMessageCapacity()
+bool ConfigParser::ParseMessageCapacity(std::unique_ptr<config_t>& config)
 {
-    mConfigData->messageCapacity = mRoot["message_capacity"].asUInt();
+    config->messageCapacity = mRoot["message_capacity"].asUInt();
 
-    return mConfigData->isMessageCapacityValid();
+    return config->isMessageCapacityValid();
 }
 
-bool ConfigParser::ParseServerCapacity()
+bool ConfigParser::ParseServerCapacity(std::unique_ptr<config_t>& config)
 {
-    mConfigData->serverCapacity = mRoot["server_capacity"].asUInt();
+    config->serverCapacity = mRoot["server_capacity"].asUInt();
 
-    return mConfigData->isServerCapacityValid();
+    return config->isServerCapacityValid();
 }
