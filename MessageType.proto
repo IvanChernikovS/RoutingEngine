@@ -2,8 +2,25 @@ syntax = "proto3";
 
 package ipc;
 
+enum MessageType{
+    REGISTRATION = 0;
+    RECONNECTION = 1;
+    MESSAGE = 2;
+    TECHNIC_MESSAGE = 3;
+}
+
+message Sender{
+    string sender = 1;
+}
+
+message Receiver{
+    optional string receiver = 1;
+}
+
 message Header{
-    fixed32 size = 1;
+    MessageType messageType = 1;
+    Sender sender = 2;
+    repeated Receiver receiver = 3;
 }
 
 message Payload{
@@ -13,5 +30,5 @@ message Payload{
 
 message Package{
     Header header = 1;
-    Payload payload = 2;
+    optional Payload payload = 2;
 }
