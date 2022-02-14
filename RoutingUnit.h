@@ -5,7 +5,7 @@
 #pragma once
 
 #include <memory>
-#include <vector>
+#include <unordered_map>
 
 #include "ThreadSafeQueue.h"
 #include "MessageType.pb.h"
@@ -23,15 +23,17 @@ public:
 
 private:
     size_t mMessageCapacity = 0;
-    std::vector<std::weak_ptr<IConnection>> mConnections;
+    size_t mMaxPossibleClientsCount = 0;
+    std::unordered_map<std::string, std::weak_ptr<IConnection>> mConnections;
     ThreadSafeQueue<ipc::Package> mPackagesToSend;
 
-    void Broadcast(ipc::Package&);
-    void SendBySubscription(ipc::Package&);
-
-    void AddSubscription();
-    void AddConnectionWeak(std::weak_ptr<IConnection>);
-
+    decltype(auto) FindDesireReceiver(const std::string& receiver);
     bool CheckForOverload() const;
     void CleanExpiredConnections();
+
+    void Broadcast(ipc::Package&);
+    void Multicast(ipc::Package&);
+    void Unicast(ipc::Package&);
+
+    void RegisterClient(std::string userName, std::weak_ptr<IConnection>);
 };
