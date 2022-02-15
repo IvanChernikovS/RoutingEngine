@@ -4,8 +4,10 @@
 
 #pragma once
 
+#include <iostream>
 #include <mutex>
 #include <queue>
+#include <chrono>
 #include <condition_variable>
 
 template<class T>
@@ -21,18 +23,28 @@ public:
         mDataQueue.push(std::move(value));
         mCV.notify_one();
     }
-    void WaitAndPop(T& value)
+
+    bool WaitAndPop(T& value)
     {
         std::unique_lock<std::mutex> ul(mMutex);
-        mCV.wait(ul, [this]{ return !mDataQueue.empty(); });
+        auto pred = [self = this]{ return !self->mDataQueue.empty(); };
+
+        if(!mCV.wait_for(ul, std::chrono::minutes(2), pred))
+        {
+            std::cout << "Waiting on queue timed out" << std::endl;
+            return false;
+        }
         value = mDataQueue.front();
         mDataQueue.pop();
+        return true;
     }
+
     bool Empty() const
     {
         std::lock_guard<std::mutex> lg(mMutex);
         return mDataQueue.empty();
     }
+
 private:
     mutable std::mutex mMutex;
     std::queue<T> mDataQueue;

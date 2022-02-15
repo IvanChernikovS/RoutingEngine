@@ -29,18 +29,18 @@ RoutingUnit::~RoutingUnit() noexcept
 void RoutingUnit::PollQueue()
 {
     auto pollingHandler = [self = this]{
+        ipc::Package package;
+
         while(true)
         {
-            ipc::Package package;
             package.Clear();
-            self->mPackagesToSend.WaitAndPop(package);
-
-            if(self->mConnections.empty()) //TODO
+            if(!self->mPackagesToSend.WaitAndPop(package))
                 break;
 
-            if(package.header().receiver_size() > 1)
+            int receiversCount = package.header().receiver_size();
+            if(receiversCount > 1)
                 self->Multicast(package);
-            else
+            else if(receiversCount == 1)
                 self->Unicast(package);
         }
     };
