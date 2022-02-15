@@ -24,8 +24,8 @@ public:
 private:
     size_t mMessageCapacity = 0;
     size_t mMaxPossibleClientsCount = 0;
-    std::unordered_map<std::string, std::weak_ptr<IConnection>> mConnections;
     ThreadSafeQueue<ipc::Package> mPackagesToSend;
+    std::unordered_map<std::string, std::weak_ptr<IConnection>> mConnections;
 
     decltype(auto) FindDesireReceiver(const std::string& receiver);
     bool CheckForOverload() const;
