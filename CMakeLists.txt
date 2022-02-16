@@ -12,6 +12,7 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR})
 add_executable(CommunicationHub
         RoutingEngine.cpp
         SocketConnection.cpp
+        ProxyConnection.cpp
         Server.cpp
         ConfigParser.cpp
         ThreadSafeQueue.cpp

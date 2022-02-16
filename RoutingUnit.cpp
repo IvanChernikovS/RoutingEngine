@@ -7,24 +7,18 @@
 #include <algorithm>
 #include <unordered_set>
 
+#include "IConnection.h"
 #include "RoutingUnit.h"
-
-#include "SocketConnection.h"
-#include "MessageType.pb.cc"
+#include "ProxyConnection.h"
 
 std::mutex mutex;
 
 RoutingUnit::RoutingUnit(uint32_t maxPossibleClientsCount, size_t capacity)
 : mMessageCapacity(capacity)
 , mMaxPossibleClientsCount(maxPossibleClientsCount)
-{
-    GOOGLE_PROTOBUF_VERIFY_VERSION;
-}
+{}
 
-RoutingUnit::~RoutingUnit() noexcept
-{
-    google::protobuf::ShutdownProtobufLibrary();
-}
+RoutingUnit::~RoutingUnit() noexcept = default;
 
 void RoutingUnit::PollQueue()
 {
@@ -33,7 +27,6 @@ void RoutingUnit::PollQueue()
 
         while(true)
         {
-            package.Clear();
             if(!self->mPackagesToSend.WaitAndPop(package))
                 break;
 
@@ -53,28 +46,22 @@ void RoutingUnit::PollQueue()
 void RoutingUnit::PollChanel(int clientFd)
 {
     ipc::Package package;
-    auto socketConnection = std::make_shared<SocketConnection>(clientFd);
+    auto proxyConnection = std::make_shared<ProxyConnection>(mMessageCapacity, clientFd);
 
-    while(socketConnection->IsConnected())
+    while(true)
     {
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
-        size_t length = mMessageCapacity;
-        char* buffer = new char[mMessageCapacity];
-
-        auto result = socketConnection->Read(buffer, length);
+        auto result = proxyConnection->Read(package);
         if(result == err_t::READING_FAILED)
             continue;
         if(result == err_t::CONNECTION_CLOSED)
             break;
 
-        package.Clear();
-        package.ParseFromArray(buffer, static_cast<int>(length));
-
         if(package.header().messagetype() == ipc::REGISTRATION)
         {
             RegisterClient(package.header().sender().sender(),
-                           std::weak_ptr<IConnection>(socketConnection));
+                           std::weak_ptr<ProxyConnection>(proxyConnection));
             std::cout << package.header().sender().sender() << " - registered." << std::endl;
             continue;
         }
@@ -88,10 +75,59 @@ void RoutingUnit::PollChanel(int clientFd)
     }
 }
 
-decltype(auto) RoutingUnit::FindDesireReceiver(const std::string& receiver)
+void RoutingUnit::Broadcast(ipc::Package& package)
 {
-    auto isEqual = [&receiver](const auto& user){ return user.first == receiver; };
-    return std::find_if(mConnections.cbegin(), mConnections.cend(), isEqual);
+    std::string sender = package.header().sender().sender();
+
+    for(auto& connection: mConnections)
+    {
+        if(connection.second.expired() || connection.first == sender)
+            continue;
+
+        connection.second.lock()->Write(package);
+    }
+}
+
+void RoutingUnit::Multicast(ipc::Package& package)
+{
+    std::unordered_set<std::string> receivers;
+    int receiversCount = package.header().receiver_size();
+
+    for(auto i = 0; i < receiversCount; ++i)
+        receivers.emplace(package.header().receiver()[i].receiver());
+
+    for(auto& receiver: receivers)
+    {
+        auto desiredReceiver = mConnections.find(receiver);
+
+        if(desiredReceiver == mConnections.cend() || desiredReceiver->second.expired())
+            continue;
+
+        desiredReceiver->second.lock()->Write(package);
+    }
+}
+
+void RoutingUnit::Unicast(ipc::Package &package)
+{
+    std::string receiver = package.header().receiver().cbegin()->receiver();
+
+    auto desiredReceiver = mConnections.find(receiver);
+
+    if(desiredReceiver == mConnections.cend())
+        return;
+
+    if(!desiredReceiver->second.expired())
+        desiredReceiver->second.lock()->Write(package);
+}
+
+void RoutingUnit::RegisterClient(std::string userName, std::weak_ptr<ProxyConnection> connectionWeak)
+{
+    std::lock_guard<std::mutex> lg(mutex);
+
+    if(CheckForOverload())
+        CleanExpiredConnections();
+
+    mConnections.emplace(std::move(userName),std::move(connectionWeak));
 }
 
 bool RoutingUnit::CheckForOverload() const
@@ -106,79 +142,4 @@ void RoutingUnit::CleanExpiredConnections()
 
     for(auto it = mConnections.begin(); it != mConnections.end();)
         it->second.expired() ? it = mConnections.erase(it) : ++it;
-}
-
-void RoutingUnit::Broadcast(ipc::Package& package)
-{
-    std::string sender = package.header().sender().sender();
-    size_t actualSize = package.ByteSizeLong();
-    char* buffer = new char[actualSize];
-
-    package.SerializeToArray(buffer, static_cast<int>(actualSize));
-
-    for(auto& connection: mConnections)
-    {
-        if(connection.second.expired() || connection.first == sender)
-            continue;
-
-        connection.second.lock()->Write(buffer, actualSize);
-    }
-
-    delete[] buffer;
-}
-
-void RoutingUnit::Multicast(ipc::Package& package)
-{
-    std::unordered_set<std::string> receivers;
-    int receiversCount = package.header().receiver_size();
-
-    for(auto i = 0; i < receiversCount; ++i)
-        receivers.emplace(package.header().receiver()[i].receiver());
-
-    size_t actualSize = package.ByteSizeLong();
-    char* buffer = new char[actualSize];
-
-    package.SerializeToArray(buffer, static_cast<int>(actualSize));
-
-    for(auto& receiver: receivers)
-    {
-        auto desiredReceiver = FindDesireReceiver(receiver);
-
-        if(desiredReceiver == mConnections.cend() || desiredReceiver->second.expired())
-            continue;
-
-        desiredReceiver->second.lock()->Write(buffer, actualSize);
-    }
-
-    delete[] buffer;
-}
-
-void RoutingUnit::Unicast(ipc::Package &package)
-{
-    std::string receiver = package.header().receiver().cbegin()->receiver();
-
-    auto desiredReceiver = FindDesireReceiver(receiver);
-
-    if(desiredReceiver == mConnections.cend())
-        return;
-
-    size_t actualSize = package.ByteSizeLong();
-    char* buffer = new char[actualSize];
-
-    package.SerializeToArray(buffer, static_cast<int>(actualSize));
-
-    if(!desiredReceiver->second.expired())
-        desiredReceiver->second.lock()->Write(buffer, actualSize);
-
-    delete[] buffer;
-}
-
-void RoutingUnit::RegisterClient(std::string userName, std::weak_ptr<IConnection> connectionWeak)
-{
-    std::lock_guard<std::mutex> lg(mutex);
-
-    if(CheckForOverload())
-        CleanExpiredConnections();
-
-    mConnections.emplace(std::move(userName),std::move(connectionWeak));
 }

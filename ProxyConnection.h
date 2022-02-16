@@ -4,13 +4,21 @@
 
 #pragma once
 
+#include "MessageType.pb.h"
 
+class IConnection;
+enum class err_t;
 
 class ProxyConnection
 {
 public:
-    explicit ProxyConnection();
+    explicit ProxyConnection(size_t capacity, int clientFd);
     ~ProxyConnection() noexcept;
+
+    err_t Read(ipc::Package&);
+    err_t Write(ipc::Package&);
+
 private:
-    //ipc::Package mPackage;
+    size_t mMessageCapacity = 0;
+    std::unique_ptr<IConnection> mConnection;
 };

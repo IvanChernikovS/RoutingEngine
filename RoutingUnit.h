@@ -10,7 +10,7 @@
 #include "ThreadSafeQueue.h"
 #include "MessageType.pb.h"
 
-class IConnection;
+class ProxyConnection;
 
 class RoutingUnit
 {
@@ -25,15 +25,13 @@ private:
     size_t mMessageCapacity = 0;
     size_t mMaxPossibleClientsCount = 0;
     ThreadSafeQueue<ipc::Package> mPackagesToSend;
-    std::unordered_map<std::string, std::weak_ptr<IConnection>> mConnections;
-
-    decltype(auto) FindDesireReceiver(const std::string& receiver);
-    bool CheckForOverload() const;
-    void CleanExpiredConnections();
+    std::unordered_map<std::string, std::weak_ptr<ProxyConnection>> mConnections;
 
     void Broadcast(ipc::Package&);
     void Multicast(ipc::Package&);
     void Unicast(ipc::Package&);
 
-    void RegisterClient(std::string userName, std::weak_ptr<IConnection>);
+    void RegisterClient(std::string userName, std::weak_ptr<ProxyConnection>);
+    bool CheckForOverload() const;
+    void CleanExpiredConnections();
 };
