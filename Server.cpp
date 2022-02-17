@@ -19,6 +19,8 @@ Server::Server(const std::string& ipAddress, uint32_t port, uint32_t capacity)
     {
         std::cout << "Invalid ip address" << std::endl;
     }
+
+    mSocketClientFds.reserve(mMaxClientCount);
 }
 
 Server::~Server() noexcept
@@ -90,7 +92,7 @@ int Server::Select()
     mLargest_socket = mServerSocketFd;
     FD_SET(mServerSocketFd, &mWorking_set);
 
-    std::cout << "Waiting on select()..." << std::endl;
+    std::cout << "Waiting on select..." << std::endl;
     int rc = select(mLargest_socket + 1, &mWorking_set, nullptr, nullptr, &mTimeout);
 
     if(rc < 0)
@@ -131,7 +133,7 @@ int Server::TryAccept()
     if(clientSocketFd > mLargest_socket)
         mLargest_socket = clientSocketFd;
 
-    mSocketClientFds.emplace(clientSocketFd);
+    mSocketClientFds.emplace_back(clientSocketFd);
 
     std::cout << "Socket accepted" << std::endl;
 

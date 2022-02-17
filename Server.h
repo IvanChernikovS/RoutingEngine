@@ -7,7 +7,7 @@
 #include <netinet/in.h>
 #include <sys/poll.h>
 #include <string>
-#include <set>
+#include <vector>
 
 #include "IConnection.h"
 
@@ -31,5 +31,5 @@ private:
     fd_set mWorking_set{};
     struct timeval mTimeout{};
     struct sockaddr_in mSocketAddress{};
-    std::set<int> mSocketClientFds;
+    std::vector<int> mSocketClientFds;
 };

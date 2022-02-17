@@ -14,7 +14,7 @@ class ConfigParser
 {
 public:
     explicit ConfigParser();
-    virtual ~ConfigParser();
+    virtual ~ConfigParser() noexcept;
 
     virtual bool Parse(const char* path, std::unique_ptr<config_t>& config);
 

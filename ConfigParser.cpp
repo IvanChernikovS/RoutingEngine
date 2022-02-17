@@ -9,7 +9,7 @@
 #include "Config.h"
 
 ConfigParser::ConfigParser() = default;
-ConfigParser::~ConfigParser() = default;
+ConfigParser::~ConfigParser() noexcept = default;
 
 bool ConfigParser::Parse(const char* pathToJason, std::unique_ptr<config_t>& config)
 {

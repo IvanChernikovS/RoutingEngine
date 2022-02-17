@@ -27,13 +27,11 @@ private:
     ThreadSafeQueue<ipc::Package> mPackagesToSend;
     std::unordered_map<std::string, std::weak_ptr<IConnection>> mConnections;
 
-    decltype(auto) FindDesireReceiver(const std::string& receiver);
-    bool CheckForOverload() const;
-    void CleanExpiredConnections();
-
-    void Broadcast(ipc::Package&);
-    void Multicast(ipc::Package&);
-    void Unicast(ipc::Package&);
+    void Broadcast(ipc::Package&) const;
+    void Multicast(ipc::Package&) const;
+    void Unicast(ipc::Package&) const;
 
     void RegisterClient(std::string userName, std::weak_ptr<IConnection>);
+    bool CheckForOverload() const;
+    void CleanExpiredConnections();
 };

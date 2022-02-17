@@ -88,27 +88,7 @@ void RoutingUnit::PollChanel(int clientFd)
     }
 }
 
-decltype(auto) RoutingUnit::FindDesireReceiver(const std::string& receiver)
-{
-    auto isEqual = [&receiver](const auto& user){ return user.first == receiver; };
-    return std::find_if(mConnections.cbegin(), mConnections.cend(), isEqual);
-}
-
-bool RoutingUnit::CheckForOverload() const
-{
-    int delta = 5;
-    return mConnections.size() > mMaxPossibleClientsCount - delta;
-}
-
-void RoutingUnit::CleanExpiredConnections()
-{
-    std::lock_guard<std::mutex> lg(mutex);
-
-    for(auto it = mConnections.begin(); it != mConnections.end();)
-        it->second.expired() ? it = mConnections.erase(it) : ++it;
-}
-
-void RoutingUnit::Broadcast(ipc::Package& package)
+void RoutingUnit::Broadcast(ipc::Package& package) const
 {
     std::string sender = package.header().sender().sender();
     size_t actualSize = package.ByteSizeLong();
@@ -127,7 +107,7 @@ void RoutingUnit::Broadcast(ipc::Package& package)
     delete[] buffer;
 }
 
-void RoutingUnit::Multicast(ipc::Package& package)
+void RoutingUnit::Multicast(ipc::Package& package) const
 {
     std::unordered_set<std::string> receivers;
     int receiversCount = package.header().receiver_size();
@@ -142,7 +122,7 @@ void RoutingUnit::Multicast(ipc::Package& package)
 
     for(auto& receiver: receivers)
     {
-        auto desiredReceiver = FindDesireReceiver(receiver);
+        auto desiredReceiver = mConnections.find(receiver);
 
         if(desiredReceiver == mConnections.cend() || desiredReceiver->second.expired())
             continue;
@@ -153,11 +133,11 @@ void RoutingUnit::Multicast(ipc::Package& package)
     delete[] buffer;
 }
 
-void RoutingUnit::Unicast(ipc::Package &package)
+void RoutingUnit::Unicast(ipc::Package &package) const
 {
     std::string receiver = package.header().receiver().cbegin()->receiver();
 
-    auto desiredReceiver = FindDesireReceiver(receiver);
+    auto desiredReceiver = mConnections.find(receiver);
 
     if(desiredReceiver == mConnections.cend())
         return;
@@ -181,4 +161,18 @@ void RoutingUnit::RegisterClient(std::string userName, std::weak_ptr<IConnection
         CleanExpiredConnections();
 
     mConnections.emplace(std::move(userName),std::move(connectionWeak));
+}
+
+bool RoutingUnit::CheckForOverload() const
+{
+    int delta = 5;
+    return mConnections.size() > mMaxPossibleClientsCount - delta;
+}
+
+void RoutingUnit::CleanExpiredConnections()
+{
+    std::lock_guard<std::mutex> lg(mutex);
+
+    for(auto it = mConnections.begin(); it != mConnections.end();)
+        it->second.expired() ? it = mConnections.erase(it) : ++it;
 }
