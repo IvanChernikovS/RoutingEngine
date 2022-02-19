@@ -27,21 +27,27 @@ SQLiteUserData::SQLiteUserData()
 SQLiteUserData::~SQLiteUserData() noexcept
 {
     CloseSqlite();
+    delete[] mErrMsg;
 }
 
 bool SQLiteUserData::IsUserRegistered(const std::string& userName)
 {
-    mQuery = "SELECT EXISTS(SELECT * FROM USER_DATA WHERE NAME = " + userName + ");";
+    mQuery = "SELECT EXISTS(SELECT * FROM USER_DATA WHERE NAME = '" + userName + "');";
 
     SqliteExec();
-    if(callbackReturn == 0)
+    if(callbackReturn == '0')
     {
-        std::cout << "Select existing went wrong" << std::endl;
+        std::cout << "User not found" << std::endl;
         return false;
     }
+    else if(callbackReturn == '1')
+    {
+        std::cout << "User had been found" << std::endl;
+        return true;
+    }
 
-    std::cout << "Select existing went successfully: return value = " << callbackReturn << std::endl;
-    return true;
+    std::cout << "User selection from DB went wrong" << std::endl;
+    return false;
 }
 
 void SQLiteUserData::StoreNewUser(const std::string& userName, int userId)
@@ -103,7 +109,7 @@ bool SQLiteUserData::SqliteExec()
 {
     if(sqlite3_exec(mSqlConnection, mQuery.data(), logQuery, nullptr, &mErrMsg) != SQLITE_OK)
     {
-        std::cout << "SQL error: " << *mErrMsg << std::endl;
+        fprintf(stderr, "SQL error: %s\n", mErrMsg);
         return false;
     }
     return true;

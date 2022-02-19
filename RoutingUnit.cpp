@@ -10,6 +10,7 @@
 #include "RoutingUnit.h"
 
 #include "SocketConnection.h"
+#include "SQLiteQueries.h"
 #include "MessageType.pb.cc"
 
 std::mutex mutex;
@@ -17,6 +18,7 @@ std::mutex mutex;
 RoutingUnit::RoutingUnit(uint32_t maxPossibleClientsCount, size_t capacity)
 : mMessageCapacity(capacity)
 , mMaxPossibleClientsCount(maxPossibleClientsCount)
+, mSqliteUserData(std::make_unique<SQLiteUserData>())
 {
     GOOGLE_PROTOBUF_VERIFY_VERSION;
 }
@@ -71,17 +73,24 @@ void RoutingUnit::PollChanel(int clientFd)
         package.Clear();
         package.ParseFromArray(buffer, static_cast<int>(length));
 
+        //TODO
+        std::string userName = package.header().sender().sender();
         if(package.header().messagetype() == ipc::REGISTRATION)
         {
-            RegisterClient(package.header().sender().sender(),
+            //TODO
+            if(!mSqliteUserData->IsUserRegistered(userName))
+                mSqliteUserData->StoreNewUser(userName, 1);
+
+            AddClientToMap(package.header().sender().sender(),
                            std::weak_ptr<IConnection>(socketConnection));
+
             std::cout << package.header().sender().sender() << " - registered." << std::endl;
             continue;
         }
-        else if(package.header().messagetype() == ipc::MESSAGE)
+        if(package.header().messagetype() == ipc::MESSAGE)
         {
             std::cout << "Message: " << package.payload().value()
-                      << " -> from:" << package.header().sender().sender() << std::endl;
+                      << " -> from: " << package.header().sender().sender() << std::endl;
 
             mPackagesToSend.Push(package);
         }
@@ -153,7 +162,7 @@ void RoutingUnit::Unicast(ipc::Package &package) const
     delete[] buffer;
 }
 
-void RoutingUnit::RegisterClient(std::string userName, std::weak_ptr<IConnection> connectionWeak)
+void RoutingUnit::AddClientToMap(std::string userName, std::weak_ptr<IConnection> connectionWeak)
 {
     std::lock_guard<std::mutex> lg(mutex);
 

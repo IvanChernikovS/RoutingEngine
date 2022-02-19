@@ -11,6 +11,7 @@
 #include "MessageType.pb.h"
 
 class IConnection;
+class SQLiteUserData;
 
 class RoutingUnit
 {
@@ -24,6 +25,7 @@ public:
 private:
     size_t mMessageCapacity = 0;
     size_t mMaxPossibleClientsCount = 0;
+    std::unique_ptr<SQLiteUserData> mSqliteUserData;
     ThreadSafeQueue<ipc::Package> mPackagesToSend;
     std::unordered_map<std::string, std::weak_ptr<IConnection>> mConnections;
 
@@ -31,7 +33,7 @@ private:
     void Multicast(ipc::Package&) const;
     void Unicast(ipc::Package&) const;
 
-    void RegisterClient(std::string userName, std::weak_ptr<IConnection>);
+    void AddClientToMap(std::string userName, std::weak_ptr<IConnection>);
     bool CheckForOverload() const;
     void CleanExpiredConnections();
 };

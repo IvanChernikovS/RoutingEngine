@@ -16,6 +16,7 @@ add_executable(CommunicationHub
         ConfigParser.cpp
         ThreadSafeQueue.cpp
         RoutingUnit.cpp
+        SQLiteQueries.cpp
         main.cpp
         )
 
@@ -23,4 +24,5 @@ target_link_libraries(CommunicationHub
         ${CMAKE_THREAD_LIBS_INIT}
         ${Protobuf_LIBRARIES}
         jsoncpp
+        sqlite3
         )
